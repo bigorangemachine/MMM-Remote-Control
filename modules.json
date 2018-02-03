@@ -1,10 +1,10 @@
 [
     {
-        "author": "Jopyth",
+        "author": "bigorangemachine",
         "desc": "Display a candle burning down towards a specific date (e.g. an advent candle).",
-        "id": "Jopyth/MMM-Advent",
+        "id": "bigorangemachine/MMM-Advent",
         "longname": "MMM-Advent",
-        "url": "https://github.com/Jopyth/MMM-Advent"
+        "url": "https://github.com/bigorangemachine/MMM-Advent"
     },
     {
         "author": "CFenner",
@@ -497,11 +497,11 @@
         "url": "https://github.com/KirAsh4/random_quotes"
     },
     {
-        "author": "Jopyth",
+        "author": "bigorangemachine",
         "desc": "Cleanly shutdown (or reboot) your mirror, edit which modules are shown on your mirror and turn your monitor off and on from a simple website, i.e. from your smartphone.",
-        "id": "Jopyth/MMM-Remote-Control",
+        "id": "bigorangemachine/MMM-Remote-Control",
         "longname": "MMM-Remote-Control",
-        "url": "https://github.com/Jopyth/MMM-Remote-Control"
+        "url": "https://github.com/bigorangemachine/MMM-Remote-Control"
     },
     {
         "author": "archerydwd",
@@ -693,11 +693,11 @@
         "url": "https://github.com/Bangee44/MMM-TrainConnections"
     },
     {
-        "author": "Jopyth",
+        "author": "bigorangemachine",
         "desc": "This module can show [Trello](https://trello.com/) cards on your mirror.",
-        "id": "Jopyth/MMM-Trello",
+        "id": "bigorangemachine/MMM-Trello",
         "longname": "MMM-Trello",
-        "url": "https://github.com/Jopyth/MMM-Trello"
+        "url": "https://github.com/bigorangemachine/MMM-Trello"
     },
     {
         "author": "fewieden",
