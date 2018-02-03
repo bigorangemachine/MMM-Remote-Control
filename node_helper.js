@@ -137,7 +137,7 @@ module.exports = NodeHelper.create({
 		this.expressApp.get("/hide/:module", function (req, res) {
 			self.callAfterUpdate(function () {
 				// /remote?action=HIDE&module=module_7_weatherforecast
-				var queryResults= bulk(self, query, req);
+				var queryResults= bulkHide(self, query, req);
 				if (queryResults.result.length === 0 && queryResults.inverse.length === 0) {
 					res.send({"status": "error", "reason": "unknown_command", "info": "original input: " + JSON.stringify(query)});
 				} else {
