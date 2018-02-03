@@ -127,13 +127,30 @@ module.exports = NodeHelper.create({
 			self.callAfterUpdate(function () {
 				console.log('self.configData.moduleData', self.configData.moduleData);
 
-				var query = url.parse(req.url, true).query;
+				var query = Object.assign({}, url.parse(req.url, true).query, { module: req.params.module });
 				// /remote?action=HIDE&module=module_7_weatherforecast
-				var result = self.executeQuery({ action: 'HIDE', module: req.params.module }, res);
-				if (result === true) {
-					return;
+				// var result = self.executeQuery(query, res);
+				// if (result === true) {
+				// 	return;
+				// }
+				//inverse result
+				var queryResults = queryModules(self.configData.moduleData, { name: req.params.module });
+				queryResults.result.forEach(function(module){
+					var payload = { module: module.identifier};
+					if (query.force === "true") {
+						payload.force = true;
+					}
+					self.sendSocketNotification('SHOW', payload);
+				});
+				queryResults.inverse.forEach(function(module){
+					var payload = { module: module.identifier, force: true};
+					self.sendSocketNotification('HIDE', payload);
+				});
+				if (queryResults.result.length === 0 && queryResults.inverse.length === 0) {
+					res.send({"status": "error", "reason": "unknown_command", "info": "original input: " + JSON.stringify(query)});
+				} else {
+					res.send({"status": "success"});
 				}
-				res.send({"status": "error", "reason": "unknown_command", "info": "original input: " + JSON.stringify(query)});
 			});
 		});
 	},
@@ -912,3 +929,23 @@ module.exports = NodeHelper.create({
 
 	}
 });
+function queryModules(moduleList, queryObj){
+	var queryList = [];
+	var inverseList = [];
+	moduleList.forEach(function(module){
+		var foundMoudle = false;
+		if (module && queryObj) {
+			for (var key in queryObj) {
+				if (key in module && module[key] === queryObj[key]) {
+					foundMoudle = true;
+				}
+			}
+		}
+		if (foundMoudle) {
+			queryList.push(module);
+		} else {
+			inverseList.push(module);
+		}
+	});
+	return { result: queryList, inverse: inverseList  };
+}
