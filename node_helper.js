@@ -123,29 +123,23 @@ module.exports = NodeHelper.create({
 		});
 
 		this.expressApp.get("/show/:module", function (req, res) {
-
 			self.callAfterUpdate(function () {
-				console.log('self.configData.moduleData', self.configData.moduleData);
-
 				var query = Object.assign({}, url.parse(req.url, true).query, { module: req.params.module });
 				// /remote?action=HIDE&module=module_7_weatherforecast
-				// var result = self.executeQuery(query, res);
-				// if (result === true) {
-				// 	return;
-				// }
-				//inverse result
-				var queryResults = queryModules(self.configData.moduleData, { name: req.params.module });
-				queryResults.result.forEach(function(module){
-					var payload = { module: module.identifier};
-					if (query.force === "true") {
-						payload.force = true;
-					}
-					self.sendSocketNotification('SHOW', payload);
-				});
-				queryResults.inverse.forEach(function(module){
-					var payload = { module: module.identifier, force: true};
-					self.sendSocketNotification('HIDE', payload);
-				});
+				var queryResults= bulkShow(self, req);
+				if (queryResults.result.length === 0 && queryResults.inverse.length === 0) {
+					res.send({"status": "error", "reason": "unknown_command", "info": "original input: " + JSON.stringify(query)});
+				} else {
+					res.send({"status": "success"});
+				}
+			});
+		});
+
+		this.expressApp.get("/hide/:module", function (req, res) {
+			self.callAfterUpdate(function () {
+				var query = Object.assign({}, url.parse(req.url, true).query, { module: req.params.module });
+				// /remote?action=HIDE&module=module_7_weatherforecast
+				var queryResults= bulkShow(self, req);
 				if (queryResults.result.length === 0 && queryResults.inverse.length === 0) {
 					res.send({"status": "error", "reason": "unknown_command", "info": "original input: " + JSON.stringify(query)});
 				} else {
@@ -948,4 +942,25 @@ function queryModules(moduleList, queryObj){
 		}
 	});
 	return { result: queryList, inverse: inverseList  };
+}
+function bulkShow(self, req){
+	return moduleAction('SHOW', 'HIDE', self, req);
+}
+function bulkHide(self, req){
+	return moduleAction('HIDE', 'SHOW', self, req);
+}
+function moduleAction(mainAction, inverseAction, self, req){
+	var queryResults = queryModules(self.configData.moduleData, { name: req.params.module });
+	queryResults.result.forEach(function(module){
+		var payload = { module: module.identifier};
+		if (query.force === "true") {
+			payload.force = true;
+		}
+		self.sendSocketNotification('SHOW', payload);
+	});
+	queryResults.inverse.forEach(function(module){
+		var payload = { module: module.identifier, force: true};
+		self.sendSocketNotification('HIDE', payload);
+	});
+	return queryResults;
 }
