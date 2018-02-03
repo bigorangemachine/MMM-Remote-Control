@@ -121,6 +121,21 @@ module.exports = NodeHelper.create({
 			}
 			res.send({"status": "error", "reason": "unknown_command", "info": "original input: " + JSON.stringify(query)});
 		});
+
+		this.expressApp.get("/show/:module", function (req, res) {
+
+			self.callAfterUpdate(function () {
+				console.log('self.configData.moduleData', self.configData.moduleData);
+
+				var query = url.parse(req.url, true).query;
+				// /remote?action=HIDE&module=module_7_weatherforecast
+				var result = self.executeQuery({ action: 'HIDE', module: req.params.module }, res);
+				if (result === true) {
+					return;
+				}
+				res.send({"status": "error", "reason": "unknown_command", "info": "original input: " + JSON.stringify(query)});
+			});
+		});
 	},
 
 	capitalizeFirst: function(string) {
@@ -209,7 +224,7 @@ module.exports = NodeHelper.create({
 					currentModule = newModule;
 				}
 				self.loadModuleDefaultConfig(currentModule, modulePath);
-				
+
 				// check for available updates
 				var stat;
 				try {
@@ -434,7 +449,7 @@ module.exports = NodeHelper.create({
 					if (!simpleIdentifier.test(prop)) {
 						leftHand = "\"" + prop + "\"";
 					}
-					string.push(leftHand + ": " + this.convertToText(obj[prop], indentation + 1));      
+					string.push(leftHand + ": " + this.convertToText(obj[prop], indentation + 1));
 				}
 			};
 			return "{" + inl + string.join("," + inl) + nl + "}";
