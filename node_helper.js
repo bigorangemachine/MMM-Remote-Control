@@ -124,7 +124,6 @@ module.exports = NodeHelper.create({
 
 		this.expressApp.get("/show/:module", function (req, res) {
 			self.callAfterUpdate(function () {
-				var query = Object.assign({}, url.parse(req.url, true).query, { module: req.params.module });
 				// /remote?action=HIDE&module=module_7_weatherforecast
 				var queryResults= bulkShow(self, req);
 				if (queryResults.result.length === 0 && queryResults.inverse.length === 0) {
@@ -137,9 +136,8 @@ module.exports = NodeHelper.create({
 
 		this.expressApp.get("/hide/:module", function (req, res) {
 			self.callAfterUpdate(function () {
-				var query = Object.assign({}, url.parse(req.url, true).query, { module: req.params.module });
 				// /remote?action=HIDE&module=module_7_weatherforecast
-				var queryResults= bulkShow(self, req);
+				var queryResults= bulk(self, query, req);
 				if (queryResults.result.length === 0 && queryResults.inverse.length === 0) {
 					res.send({"status": "error", "reason": "unknown_command", "info": "original input: " + JSON.stringify(query)});
 				} else {
@@ -950,6 +948,7 @@ function bulkHide(self, req){
 	return moduleAction('HIDE', 'SHOW', self, req);
 }
 function moduleAction(mainAction, inverseAction, self, req){
+	var query = Object.assign({}, url.parse(req.url, true).query, { module: req.params.module });
 	var queryResults = queryModules(self.configData.moduleData, { name: req.params.module });
 	queryResults.result.forEach(function(module){
 		var payload = { module: module.identifier};
